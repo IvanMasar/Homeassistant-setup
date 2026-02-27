@@ -1,26 +1,35 @@
 # 🏠 Inteligentná domácnosť (Home Assistant)
 
-Tento projekt obsahuje kompletné riešenie inteligentnej domácnosti založené na platforme **Home Assistant** a vlastnoručne vyrobených zariadeniach s čipmi **ESP32** a **ESP8266**.
-
-## 🛠️ Štruktúra projektu (Zariadenia)
-V nasledujúcich priečinkoch nájdete všetko potrebné na zostrojenie a oživenie jednotlivých modulov (zdrojový kód, 3D modely krabičiek a fotografie):
-
-* [**Pohybové čidlo**](./pohybove_cidlo) – Automatické rozsvecovanie svetiel a zabezpečenie.
-* [**Roleta**](./roleta) – Automatizované ovládanie žalúzií/roliet.
-* [**Teplomer**](./teplomer) – Monitorovanie teploty a vlhkosti v miestnosti.
+Tento projekt predstavuje komplexný systém smart domácnosti postavený na **Home Assistant** a vlastnom hardvéri s čipmi **ESP32 / ESP8266**.
 
 ---
 
-## 📊 Nastavenie Dashboardu (Užívateľské rozhranie)
-Dashboard v Home Assistantovi slúži na vizualizáciu dát a manuálne ovládanie všetkých prvkov.
+## 🛠️ Hardvérové moduly
+Každý priečinok obsahuje schémy, 3D modely krabičiek a kód potrebný na zostrojenie:
 
-### Ukážka rozhrania
-![Môj Dashboard](images/dashboard_screenshot.png) 
-*(Nezabudni nahrať screenshot do priečinka images a premenovať ho na dashboard_screenshot.png)*
+* [**Pohybové čidlo**](./pohybove_cidlo) – Detekcia pohybu a automatizácia svetiel.
+* [**Roleta**](./roleta) – Motorizované ovládanie a nastavenie pozície.
+* [**Teplomer**](./teplomer) – Presné meranie teploty a vlhkosti.
 
-### Ako importovať môj dashboard
-Ak si chcete nastaviť rovnaký vzhľad, postupujte takto:
-1. V Home Assistantovi vytvorte nový prázdny Dashboard.
-2. V pravom hornom rohu kliknite na tri bodky -> **Upraviť ovládací panel**.
-3. Opäť kliknite na tri bodky -> **Editor konfigurácie YAML**.
-4. Skopírujte a vložte kód zo súboru: [dashboard_config.yaml](./dashboard_config.yaml)
+---
+
+## 📊 Dashboard a Užívateľské rozhranie
+
+Vzhľad môjho dashboardu je inšpirovaný tvorbou YouTubera [**HA Dashboards**](https://www.youtube.com/@HADashboards), ktorého postupy som adaptoval pre potreby môjho projektu.
+
+### ⚠️ Požiadavky (HACS)
+Pre správne zobrazenie dashboardu je nevyhnutné mať nainštalovaný **HACS** a cez neho stiahnuté tieto frontend doplnky:
+
+| Kategória | Doplnky (Frontend) |
+| :--- | :--- |
+| **Karty** | `Bubble Card`, `Mushroom`, `Button Card`, `Mini Graph Card`, `My Cards Bundle` |
+| **Layout** | `Layout Card`, `Swipe Card`, `Navbar Card` |
+| **Dizajn/Funkcie** | `Card Mod`, `Browser Mod`, `Animated Weather Card` |
+
+### Inštalácia Dashboardu
+1. Nainštalujte všetky vyššie uvedené doplnky cez HACS.
+2. Vytvorte nový prázdny dashboard v Home Assistantovi.
+3. Prepnite do **YAML editora** a vložte kód zo súboru: [dashboard_config.yaml](./homeassistant/dashboard_config.yaml).
+
+### Ukážka môjho nastavenia
+![Môj Dashboard](images/dashboard_screenshot.png)
