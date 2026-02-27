@@ -33,4 +33,5 @@ Pre správne zobrazenie dashboardu je nevyhnutné mať nainštalovaný **HACS** 
 
 ### Ukážka môjho nastavenia
 ![Môj Dashboard](dashboard/Dashboard.png)
+
 ![Miestnosti](dashboard/Dashboard2.png)
