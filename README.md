@@ -29,7 +29,7 @@ Pre správne zobrazenie dashboardu je nevyhnutné mať nainštalovaný **HACS** 
 ### Inštalácia Dashboardu
 1. Nainštalujte všetky vyššie uvedené doplnky cez HACS.
 2. Vytvorte nový prázdny dashboard v Home Assistantovi.
-3. Prepnite do **YAML editora** a vložte kód zo súboru: [dashboard_config.yaml](./homeassistant/dashboard_config.yaml).
+3. Prepnite do **YAML editora** a vložte kód zo súboru: [dashboard_config.yaml](dashboard/dashboard_config.yaml).
 
 ### Ukážka môjho nastavenia
 ![Môj Dashboard](dashboard/Dashboard.png)
