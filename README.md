@@ -1,4 +1,4 @@
-# 🏠 Inteligentná domácnosť (Home Assistant)
+# 🏠 Smart domácnosť (Home Assistant)
 
 Tento projekt predstavuje komplexný systém smart domácnosti postavený na **Home Assistant** a vlastnom hardvéri s čipmi **ESP32 / ESP8266**.
 Ako čo nastaviť kďe čo nainštalovať na to tu mate [návod.](Home_Assistant_navod.pdf)
