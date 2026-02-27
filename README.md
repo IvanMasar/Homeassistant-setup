@@ -32,4 +32,4 @@ Pre správne zobrazenie dashboardu je nevyhnutné mať nainštalovaný **HACS** 
 3. Prepnite do **YAML editora** a vložte kód zo súboru: [dashboard_config.yaml](./homeassistant/dashboard_config.yaml).
 
 ### Ukážka môjho nastavenia
-![Môj Dashboard](dashboard/Dashboard.png)
+![Môj Dashboard](dashboard/Dashboard.png), (dashboard/Dashboard2.png)
