@@ -1,0 +1,145 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 .AppleSystemUIFontMonospaced-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red227\green227\blue228;\red71\green138\blue206;
+\red167\green197\blue151;\red79\green122\blue61;\red194\green125\blue100;}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c91185\c91185\c91350;\cssrgb\c34146\c61677\c84338;
+\cssrgb\c71035\c80830\c65726;\cssrgb\c37570\c54422\c30364;\cssrgb\c80772\c56796\c46790;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec3 esphome:\
+  name: esphome-web-69d058\
+  friendly_name: pohybove_cidlo_esp32_c3\
+  min_version: 2025.9.0\
+  name_add_mac_suffix: \cf2 \strokec4 false\cf2 \strokec3 \
+\
+  on_boot:\
+    priority: \cf2 \strokec5 800\cf2 \strokec3 \
+    then:\
+      \cf2 \strokec6 # --- 1. PRIPOJENIE ---\cf2 \strokec3 \
+      - wait_until:\
+          condition:\
+            api.connected:\
+          timeout: 30s\
+\
+      \cf2 \strokec6 # --- 2. MERANIE A ODOSLANIE ---\cf2 \strokec3 \
+      - delay: 500ms\
+      \
+      - component.update: battery_voltage\
+      - delay: 100ms \
+      \
+      - component.update: battery_level\
+      \
+      - delay: 2s \
+\
+      \cf2 \strokec6 # --- 3. LOGIKA ---\cf2 \strokec3 \
+      - if:\
+          condition:\
+            not:\
+              api.connected:\
+          then:\
+            - deep_sleep.enter: deep_sleep_component\
+\
+      - if:\
+          condition:\
+            binary_sensor.is_on: servisny_mod\
+          then:\
+            - deep_sleep.prevent: deep_sleep_component\
+          else:\
+            - wait_until:\
+                condition:\
+                  binary_sensor.is_off: pir_sensor\
+                timeout: 15s \
+\
+            - deep_sleep.enter: deep_sleep_component\
+\
+esp32:\
+  board: esp32-c3-devkitm-1\
+  framework:\
+    type: esp-idf\
+\
+logger:\
+  baud_rate: \cf2 \strokec5 0\cf2 \strokec3 \
+\
+api:\
+\
+ota:\
+  password: \cf2 \strokec7 "sisiMso1234"\cf2 \strokec3 \
+  platform: esphome\
+\
+wifi:\
+  ssid: \cf2 \strokec4 !secret\cf2 \strokec3  wifi_ssid\
+  password: \cf2 \strokec4 !secret\cf2 \strokec3  wifi_password\
+  \
+  manual_ip:\
+    static_ip: 192.168.0.146  \
+    gateway: 192.168.0.1      \
+    subnet: 255.255.255.0\
+\
+  fast_connect: \cf2 \strokec4 true\cf2 \strokec3 \
+  power_save_mode: NONE\
+\
+deep_sleep:\
+  id: deep_sleep_component\
+  run_duration: 60s\
+  sleep_duration: 60min\
+  \
+  wakeup_pin:\
+    number: GPIO4\
+    mode: INPUT_PULLDOWN\
+    inverted: \cf2 \strokec4 false\cf2 \strokec3 \
+    allow_other_uses: true \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec6 # --- HARDV\'c9R ---\cf2 \strokec3 \
+\
+sensor:\
+  \cf2 \strokec6 # Bat\'e9ria - Nap\'e4tie\cf2 \strokec3 \
+  - platform: adc\
+    pin: GPIO0\
+    id: battery_voltage\
+    name: \cf2 \strokec7 "Battery Voltage"\cf2 \strokec3 \
+    update_interval: never\
+    attenuation: 12db\
+    filters:\
+      - multiply: \cf2 \strokec5 2.0\cf2 \strokec3  \
+\
+  \cf2 \strokec6 # Bat\'e9ria - Percent\'e1\cf2 \strokec3 \
+  - platform: template\
+    name: \cf2 \strokec7 "Battery Level"\cf2 \strokec3 \
+    id: battery_level\
+    unit_of_measurement: \cf2 \strokec7 "%"\cf2 \strokec3 \
+    device_class: battery\
+    update_interval: never\
+    force_update: true \
+    lambda: |-\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec7       if (std::isnan(id(battery_voltage).state)) \{ return \{\}; \}\cf2 \strokec3 \
+\cf2 \strokec7       if (id(battery_voltage).state < 3.2) \{ return 0; \}\cf2 \strokec3 \
+\cf2 \strokec7       else if (id(battery_voltage).state > 4.2) \{ return 100; \}\cf2 \strokec3 \
+\cf2 \strokec7       else \{ return (id(battery_voltage).state - 3.2) * 100.0 / 1.0; \}\cf2 \strokec3 \
+    accuracy_decimals: \cf2 \strokec5 0\cf2 \strokec3 \
+\
+binary_sensor:\
+  \cf2 \strokec6 # Pohybov\'fd senzor (PIR)\cf2 \strokec3 \
+  - platform: gpio\
+    pin:\
+      number: GPIO4\
+      mode: INPUT_PULLDOWN\
+      allow_other_uses: \cf2 \strokec4 true\cf2 \strokec3 \
+    name: \cf2 \strokec7 "Pohyb"\cf2 \strokec3 \
+    id: pir_sensor\
+    device_class: motion\
+    filters:\
+      \cf2 \strokec6 # Skr\'e1ten\'e9 \uc0\u269 asy pre r\'fdchlej\'9aiu odozvu a r\'fdchlej\'9aie uspanie\cf2 \strokec3 \
+      - delayed_on: 50ms \
+      - delayed_off: 500ms\
+\
+  \cf2 \strokec6 # Servisn\'fd prep\'edna\uc0\u269 \cf2 \strokec3 \
+  - platform: homeassistant\
+    id: servisny_mod\
+    entity_id: input_boolean.senzor_servis\
+    internal: \cf2 \strokec4 true\cf2 \strokec3 \
+}
