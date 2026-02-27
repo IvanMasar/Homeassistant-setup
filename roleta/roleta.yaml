@@ -1,0 +1,85 @@
+esphome:
+  name: roleta-esp32-c3
+  friendly_name: roleta-esp32-c3
+  min_version: 2025.5.0
+  name_add_mac_suffix: false
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+ services:
+    - service: control_blind
+      variables:
+        target: int
+      then:
+        - stepper.set_target:
+            id: my_stepper
+            target: !lambda 'return target;'
+        - sensor.template.publish:
+            id: position
+            state: !lambda 'return target;'
+
+ota:
+  - platform: esphome
+
+improv_serial:
+
+wifi:
+  ap: {}
+
+captive_portal:
+
+esp32_improv:
+  authorizer: none
+
+web_server:
+
+cover:
+  - platform: template
+    name: "My Blind"
+    id: my_blind
+    device_class: blind
+    open_action:
+      - stepper.set_target:
+          id: my_stepper
+          target: 6000
+      - sensor.template.publish:
+          id: position
+          state: !lambda return id(my_stepper).target_position;
+    close_action:
+      - stepper.set_target:
+          id: my_stepper
+          target: 0
+      - sensor.template.publish:
+            id: position
+            state: !lambda return id(my_stepper).target_position;
+    stop_action:
+      - stepper.set_target:
+          id: my_stepper
+          target: !lambda return id(my_stepper).current_position;
+      - sensor.template.publish:
+            id: position
+            state: !lambda return id(my_stepper).current_position;
+    optimistic: true
+    assumed_state: true
+
+sensor:
+  - platform: template
+    name: "My Blind Position"
+    id: position
+
+stepper:
+  - platform: a4988
+    id: my_stepper
+    step_pin: GPIO4
+    dir_pin: GPIO3
+    sleep_pin: GPIO2
+    max_speed: 700
+
+    acceleration: inf
+    deceleration: inf
