@@ -1,4 +1,4 @@
-# 🏠 Inteligentná domácnosť (Maturitný projekt)
+# 🏠 Inteligentná domácnosť (Home Assistant)
 
 Tento projekt obsahuje kompletné riešenie inteligentnej domácnosti založené na platforme **Home Assistant** a vlastnoručne vyrobených zariadeniach s čipmi **ESP32** a **ESP8266**.
 
