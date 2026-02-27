@@ -23,4 +23,4 @@ Ak si chcete nastaviť rovnaký vzhľad, postupujte takto:
 1. V Home Assistantovi vytvorte nový prázdny Dashboard.
 2. V pravom hornom rohu kliknite na tri bodky -> **Upraviť ovládací panel**.
 3. Opäť kliknite na tri bodky -> **Editor konfigurácie YAML**.
-4. Skopírujte a vložte kód zo súboru: [dashboard_config.yaml](./homeassistant/dashboard_config.yaml)
+4. Skopírujte a vložte kód zo súboru: [dashboard_config.yaml](./homeassistant/dashboard-config.yaml)
