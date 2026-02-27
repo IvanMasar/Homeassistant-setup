@@ -1,0 +1,2257 @@
+kiosk_mode:
+  hide_header: true
+button_card_templates:
+  button_card_templates: null
+  light_slider:
+    show_icon: true
+    show_label: true
+    tap_action:
+      action: toggle
+    hold_action:
+      action: more-info
+    state:
+      - value: 'on'
+        label: |-
+          [[[ 
+            // 1. Prepínač 2 = Left
+            if (entity.entity_id == 'light.wifi_smart_switch_prepinac_2') return "Left";
+            
+            // 2. Prepínač 1 = Right (s preklepom smrt podla tvojho zadania)
+            if (entity.entity_id == 'light.wifi_smart_switch_prepinac_1') return "Right";
+            
+            // 3. Ak má svetlo jas, vypočítaj percentá (pre WLED atď.)
+            if (entity.attributes.brightness)
+              return Math.round(entity.attributes.brightness / 255 * 100) + '%';
+            
+            // 4. Záchrana pre iné prípady
+            return "Zapnuté";
+          ]]]
+        styles:
+          card:
+            - background: |
+                [[[
+                  var color = entity.attributes?.rgb_color;
+                  if (color) {
+                    return 'rgba(' + color + ')';
+                  } else {
+                    return 'rgb(249, 220, 135)';
+                  }
+                ]]]
+    custom_fields:
+      slider:
+        card:
+          type: custom:my-slider-v2
+          entity: '[[[ return entity.entity_id ]]]'
+          colorMode: brightness
+          styles:
+            container:
+              - background: none
+              - border-radius: 100px
+              - overflow: visible
+            card:
+              - height: 16px
+              - padding: 0 8px
+              - display: |
+                  [[[
+                    if (entity.entity_id == 'light.wifi_smart_switch_prepinac_1' || entity.entity_id == 'light.wifi_smart_switch_prepinac_2') return 'none';
+                    return 'block';
+                  ]]]
+              - background: |
+                  [[[
+                    if (entity.state == "on") return "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255, 1) 100%)";
+                    else return "grey";
+                  ]]]
+            track:
+              - overflow: visible
+              - background: none
+            progress:
+              - background: none
+            thumb:
+              - background: black
+              - height: 14px
+              - width: 14px
+              - border-radius: 50%
+              - box-shadow: 0 0 6px rgba(0,0,0,0.4)
+              - transition: transform 0.2s ease
+              - position: absolute
+              - top: 50%
+              - transform: translateY(-50%)
+    styles:
+      grid:
+        - grid-template-areas: |
+            [[[
+              if (entity.entity_id == 'light.wifi_smart_switch_prepinac_1' || entity.entity_id == 'light.wifi_smart_switch_prepinac_2') return '"l i" "n n"';
+              return '"l i" "n n" "slider slider"';
+            ]]]
+        - grid-template-columns: 1fr 1fr
+        - grid-template-rows: 1fr min-content
+      icon:
+        - width: 20px
+        - color: white
+      img_cell:
+        - background-color: black
+        - width: 35px
+        - height: 35px
+        - margin-top: 5px
+        - margin-right: 10px
+        - justify-self: end
+        - align-self: center
+        - border-radius: 100%
+      name:
+        - justify-self: start
+        - font-size: 11px
+        - margin-bottom: 8px
+        - color: |
+            [[[
+              if (entity.state == "on") return "black";
+              else return "#FFFFFF";
+            ]]]
+        - opacity: 0.7
+      card:
+        - height: 90px
+        - background-color: |
+            [[[
+              if (entity.state == "on") return "yellow";
+              else return "#1a1a1a";
+            ]]]
+        - box-shadow: none
+        - border-radius: 24px
+        - padding: 0 0 12px 14px
+      label:
+        - justify-self: start
+        - font-size: 20px
+        - margin-top: 20px
+        - font-weight: 500
+        - color: |
+            [[[
+              if (entity.state == "on") return "black";
+              else return "#FFFFFF";
+            ]]]
+      custom_fields:
+        slider:
+          - padding-right: 16px
+          - display: |
+              [[[
+                if (entity.entity_id == 'light.wifi_smart_switch_prepinac_1' || entity.entity_id == 'light.wifi_smart_switch_prepinac_2') return 'none';
+                return 'block';
+              ]]]
+  plug_card:
+    show_label: true
+    variables:
+      icon_on: '[[[ return entity.attributes.icon ]]]'
+      icon_off: '[[[ return entity.attributes.icon ]]]'
+      color: rgb(233, 187, 250)
+    show_state: true
+    tap_action:
+      action: toggle
+    hold_action:
+      action: more-info
+    state:
+      - value: 'on'
+        icon: '[[[ return variables.icon_on ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.color ]]]'
+      - value: 'off'
+        icon: '[[[ return variables.icon_off ]]]'
+        styles:
+          card:
+            - background-color: null
+    custom_fields:
+      icon2:
+        card:
+          type: custom:button-card
+          icon: |
+            [[[ 
+              if (entity.state == "on") {
+                return "mdi:toggle-switch";
+              } else {
+                return "mdi:toggle-switch-off";
+              }
+            ]]]
+          styles:
+            card:
+              - background-color: null
+              - width: 27px
+              - height: 27px
+            icon:
+              - width: 15px
+              - color: null
+    styles:
+      grid:
+        - grid-template-areas: '''i s icon2'' '' n n n'''
+        - grid-template-columns: 20px 1fr 1fr
+        - grid-template-rows: 1fr min-content
+      icon:
+        - width: 20px
+        - margin-top: 7px
+        - color: |
+            [[[
+              if (entity.state == "on") return "black";
+              else return "white";
+            ]]]
+      img_cell:
+        - justify-content: flex-start
+      name:
+        - justify-self: start
+        - font-size: 11px
+        - margin-bottom: 3px
+        - color: |
+            [[[
+              if (entity.state == "on") return "black";
+              else return "white";
+            ]]]
+        - opacity: 0.7
+      card:
+        - height: 90px
+        - background-color: |
+            [[[
+              if (entity.state == "on") return 'rgb(249, 220, 135)';
+              else return "white";
+            ]]]
+        - box-shadow: none
+        - padding: 12px 0 12px 14px
+        - border-radius: 24px
+      state:
+        - justify-self: start
+        - font-size: 20px
+        - margin-top: 11px
+        - padding-left: 3px
+        - font-weight: 500
+        - color: |
+            [[[
+              if (entity.state == "on") return "black";
+              else return "white";
+            ]]]
+      custom_fields:
+        icon2:
+          - margin-top: '-20px'
+          - justify-self: end
+          - align-self: center
+          - width: 24px
+          - padding-right: 10px
+  door_card:
+    show_label: true
+    name: Door
+    variables:
+      icon_on: mdi:door-open
+      icon_off: mdi:door-closed
+      state_on: 'on'
+      state_off: 'off'
+      background_color_on: rgb(244, 184, 139)
+      background_color_off: null
+      color_on: black
+      color_off: null
+      state: |
+        [[[
+          if (entity.state == "on") return '<span style="font-size:0.7em;">Open</span>';
+          else return '<span style="font-size:0.6em;">Closed</span>';
+        ]]]
+    label: '[[[ return variables.state ]]]'
+    state:
+      - value: '[[[ return variables.state_on ]]]'
+        icon: '[[[ return variables.icon_on ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_on ]]]'
+          name:
+            - color: '[[[ return variables.color_on ]]]'
+          label:
+            - color: '[[[ return variables.color_on ]]]'
+      - value: '[[[ return variables.state_off ]]]'
+        icon: '[[[ return variables.icon_off ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_off ]]]'
+          name:
+            - color: '[[[ return variables.color_off ]]]'
+          label:
+            - color: '[[[ return variables.color_off ]]]'
+    styles:
+      card:
+        - padding: 20px 20px 12px 14px
+        - height: 129px
+        - background: null
+        - border-radius: 24px
+      grid:
+        - grid-template-areas: '"i" "l" "n"'
+      img_cell:
+        - justify-self: end
+        - align-self: start
+        - background: black
+        - padding: 7px
+        - border-radius: 50%
+        - margin: '-16px -16px 0 0'
+        - width: 30px
+        - height: 30px
+      icon:
+        - width: 24px
+        - height: 24px
+        - color: null
+      name:
+        - justify-self: start
+        - font-size: 11px
+        - color: null
+      label:
+        - justify-self: start
+        - font-size: 26px
+        - font-weight: 500
+        - color: null
+        - margin-top: 10px
+  bed_card:
+    show_label: true
+    name: Door
+    variables:
+      icon_on: mdi:bed
+      icon_off: mdi:bed-empty
+      state_on: 'on'
+      state_off: 'off'
+      background_color_on: rgb(240, 149, 141)
+      background_color_off: null
+      color_on: black
+      color_off: null
+      state: |
+        [[[
+          if (entity.state == "on") return '<span style="font-size:0.7em;">On</span>';
+          else return '<span style="font-size:0.6em;">Off</span>';
+        ]]]
+    label: '[[[ return variables.state ]]]'
+    state:
+      - value: '[[[ return variables.state_on ]]]'
+        icon: '[[[ return variables.icon_on ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_on ]]]'
+          name:
+            - color: '[[[ return variables.color_on ]]]'
+          label:
+            - color: '[[[ return variables.color_on ]]]'
+      - value: '[[[ return variables.state_off ]]]'
+        icon: '[[[ return variables.icon_off ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_off ]]]'
+          name:
+            - color: '[[[ return variables.color_off ]]]'
+          label:
+            - color: '[[[ return variables.color_off ]]]'
+    styles:
+      card:
+        - padding: 20px 20px 12px 14px
+        - height: 129px
+        - background: null
+        - border-radius: 24px
+      grid:
+        - grid-template-areas: '"i" "l" "n"'
+      img_cell:
+        - justify-self: end
+        - align-self: start
+        - background: black
+        - padding: 7px
+        - border-radius: 50%
+        - margin: '-16px -16px 0 0'
+        - width: 30px
+        - height: 30px
+      icon:
+        - width: 24px
+        - height: 24px
+        - color: null
+      name:
+        - justify-self: start
+        - font-size: 11px
+        - color: null
+      label:
+        - justify-self: start
+        - font-size: 26px
+        - font-weight: 500
+        - color: null
+        - margin-top: 10px
+  motion_card:
+    show_label: true
+    name: Motion
+    variables:
+      icon_on: mdi:motion-sensor
+      icon_off: mdi:motion-sensor-off
+      state_on: 'on'
+      state_off: 'off'
+      background_color_on: rgb(219, 245, 169)
+      background_color_off: null
+      color_on: black
+      color_off: null
+      state: |
+        [[[
+          if (entity.state == "on") return '<span style="font-size:0.7em;">Detected</span>';
+        else return '<span style="font-size:0.6em;">Cleared</span>';
+        ]]]
+    label: '[[[ return variables.state ]]]'
+    state:
+      - value: '[[[ return variables.state_on ]]]'
+        icon: '[[[ return variables.icon_on ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_on ]]]'
+          name:
+            - color: '[[[ return variables.color_on ]]]'
+          label:
+            - color: '[[[ return variables.color_on ]]]'
+      - value: '[[[ return variables.state_off ]]]'
+        icon: '[[[ return variables.icon_off ]]]'
+        styles:
+          card:
+            - background-color: '[[[ return variables.background_color_off ]]]'
+          name:
+            - color: '[[[ return variables.color_off ]]]'
+          label:
+            - color: '[[[ return variables.color_off ]]]'
+    styles:
+      card:
+        - padding: 20px 20px 12px 14px
+        - height: 129px
+        - background: null
+        - border-radius: 24px
+      grid:
+        - grid-template-areas: '"i" "l" "n"'
+      img_cell:
+        - justify-self: end
+        - align-self: start
+        - background: black
+        - padding: 7px
+        - border-radius: 50%
+        - margin: '-16px -16px 0 0'
+        - width: 30px
+        - height: 30px
+      icon:
+        - width: 24px
+        - height: 24px
+        - color: null
+      name:
+        - justify-self: start
+        - font-size: 11px
+        - color: null
+      label:
+        - justify-self: start
+        - font-size: 26px
+        - font-weight: 500
+        - color: null
+        - margin-top: 10px
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - type: custom:button-card
+            styles:
+              grid:
+                - grid-template-areas: '''item1'''
+                - grid-template-columns: 1fr 1fr 1fr
+              card:
+                - padding: 5px 0px
+                - background: none
+                - box-shadow: none
+              custom_fields:
+                item1:
+                  - justify-self: center
+            custom_fields:
+              item1:
+                card:
+                  type: custom:button-card
+                  entity: weather.forecast_home
+                  show_label: true
+                  show_state: true
+                  show_name: false
+                  label: >-
+                    [[[ return
+                    states["weather.forecast_home"].attributes.temperature +
+                    "°C"; ]]]
+                  styles:
+                    card:
+                      - border-radius: 0px
+                      - box-shadow: none
+                      - padding-right: 0px
+                      - background: none
+                    grid:
+                      - grid-template-areas: '''i s'' ''i l'''
+                      - grid-template-columns: min-content
+                      - column-gap: 10px
+                    icon:
+                      - width: 20px
+                      - color: rgb(162, 173, 197)
+                    img_cell:
+                      - width: 20px
+                    state:
+                      - justify-self: start
+                      - font-size: 10px
+                      - font-weight: 500
+                      - color: grey
+                    label:
+                      - justify-self: start
+                      - font-size: 15px
+                      - font-weight: 700
+                  tap_action:
+                    action: more-info
+            grid_options:
+              columns: full
+          - type: vertical-stack
+            cards:
+              - type: heading
+                icon: mdi:star
+                heading: Favorites
+                heading_style: title
+              - square: true
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    entity: light.kids_room_lights
+                    name: Kids room lights
+                    variables:
+                      icon_on: '[[[ return entity.attributes.icon ]]]'
+                      icon_off: '[[[ return entity.attributes.icon ]]]'
+                      color: rgb(245,210,123)
+                    show_state: true
+                    tap_action:
+                      action: toggle
+                    hold_action:
+                      action: more-info
+                    state:
+                      - value: 'on'
+                        icon: '[[[ return variables.icon_on ]]]'
+                        styles:
+                          card:
+                            - background-color: '[[[ return variables.color ]]]'
+                      - value: 'off'
+                        icon: '[[[ return variables.icon_off ]]]'
+                        styles:
+                          card:
+                            - background-color: null
+                    custom_fields:
+                      icon2:
+                        card:
+                          type: custom:button-card
+                          icon: |
+                            [[[ 
+                              if (entity.state == "on") {
+                                return "mdi:toggle-switch";
+                              } else {
+                                return "mdi:toggle-switch-off";
+                              }
+                            ]]]
+                          styles:
+                            card:
+                              - background-color: null
+                              - width: 27px
+                              - height: 27px
+                            icon:
+                              - width: 15px
+                              - color: null
+                    styles:
+                      grid:
+                        - grid-template-areas: '''i s icon2'' '' n n n'''
+                        - grid-template-columns: 20px 1fr 1fr
+                        - grid-template-rows: 1fr min-content
+                      icon:
+                        - width: 20px
+                        - margin-top: 7px
+                        - color: |
+                            [[[
+                              if (entity.state == "on") return "black";
+                              else return "white";
+                            ]]]
+                      img_cell:
+                        - justify-content: flex-start
+                      name:
+                        - justify-self: start
+                        - font-size: 11px
+                        - margin-bottom: 3px
+                        - color: |
+                            [[[
+                              if (entity.state == "on") return "black";
+                              else return "white";
+                            ]]]
+                        - opacity: 0.7
+                      card:
+                        - height: 90px
+                        - background-color: |
+                            [[[
+                              if (entity.state == "on") return 'rgb(249, 220, 135)';
+                              else return "white";
+                            ]]]
+                        - box-shadow: none
+                        - padding: 12px 0 12px 14px
+                        - border-radius: 24px
+                      state:
+                        - justify-self: start
+                        - font-size: 20px
+                        - margin-top: 11px
+                        - padding-left: 3px
+                        - font-weight: 500
+                        - color: |
+                            [[[
+                              if (entity.state == "on") return "black";
+                              else return "white";
+                            ]]]
+                      custom_fields:
+                        icon2:
+                          - margin-top: '-20px'
+                          - justify-self: end
+                          - align-self: center
+                          - width: 24px
+                          - padding-right: 10px
+                  - type: conditional
+                    conditions:
+                      - condition: location
+                        locations:
+                          - not_home
+                          - School
+                    card:
+                      type: custom:button-card
+                      entity: person.ivan_masar
+                      variables:
+                        sensor: sensor.ivans_iphone_battery_level
+                      show_state: true
+                      show_entity_picture: true
+                      tap_action:
+                        action: more-info
+                      state:
+                        - value: not_home
+                          styles:
+                            entity_picture:
+                              - filter: grayscale(100%)
+                      styles:
+                        grid:
+                          - grid-template-areas: '''i n btn'' ''i s btn'''
+                          - grid-template-columns: 60px 1fr min-content
+                          - grid-template-rows: min-content
+                        card:
+                          - background-color: none
+                          - padding: 10px 10px 10px 0px
+                        img_cell:
+                          - justify-content: start
+                          - position: absolute
+                          - width: 40px
+                          - height: 40px
+                          - left: 0
+                          - bottom: 0
+                          - margin: 0 0 8px 10px
+                          - border-radius: 50%
+                          - border: |
+                              [[[
+                                if (entity.state == 'home') {
+                                  return '2px solid rgb(227, 243, 184)';
+                                } else {
+                                  return 'none';
+                                }
+                              ]]]
+                        entity_picture:
+                          - width: 40px
+                          - height: 40px
+                        name:
+                          - align-self: start
+                          - justify-self: start
+                          - color: none
+                          - font-size: 14px
+                          - font-weight: 600
+                        state:
+                          - align-self: start
+                          - justify-self: start
+                          - color: none
+                          - font-size: 12px
+                          - opacity: 0.7
+                          - margin-top: '-5px'
+                        custom_fields:
+                          btn:
+                            - align-self: end
+                            - justify-self: end
+                          badge:
+                            - position: absolute
+                            - left: 38px
+                            - top: 5px
+                      custom_fields:
+                        badge:
+                          card:
+                            type: custom:button-card
+                            entity: '[[[ return entity.entity_id ]]]'
+                            show_icon: true
+                            show_name: false
+                            icon: mdi:home
+                            state:
+                              - value: home
+                                icon: mdi:home
+                                styles:
+                                  card:
+                                    - background: rgb(227, 243, 184)
+                              - value: not_home
+                                icon: mdi:home-export-outline
+                                styles:
+                                  card:
+                                    - background: rgb(239,150,142)
+                              - value: School
+                                icon: mdi:school
+                                styles:
+                                  card:
+                                    - background: rgb(233,189,250)
+                            styles:
+                              card:
+                                - border-radius: 50%
+                                - width: 16px
+                                - height: 16px
+                                - background: none
+                              icon:
+                                - color: black
+                                - width: 12px
+                        btn:
+                          card:
+                            type: custom:mushroom-chips-card
+                            chips:
+                              - type: entity
+                                tap_action:
+                                  action: more-info
+                                entity: '[[[ return variables.sensor ]]]'
+                                content_info: none
+                                card_mod:
+                                  style: |
+                                    ha-card {
+                                      --chip-background: black;
+                                      --color: white;
+                                      padding: 0px !important;
+                                      box-shadow: none !important;
+                                    }
+                columns: 2
+            grid_options:
+              columns: 21
+              rows: 2
+        column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Rooms
+            heading_style: title
+            icon: mdi:floor-plan
+            grid_options:
+              columns: full
+              rows: 1
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: input_boolean.all_rooms
+                tap_action:
+                  action: toggle
+          - square: false
+            type: grid
+            cards:
+              - type: custom:button-card
+                entity: light.deska_monitor_svetlo_monitor_led_pas
+                variables:
+                  icon: mdi:desk
+                  sensor: binary_sensor.sonoff_1001f84959
+                  state: |
+                    [[[
+                      var temp = states['sensor.detska_teplomer_teplota'].state;
+                      var hum = states['sensor.detska_teplomer_vlhkost'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size: 0.4em; opacity: 0.6; margin-left: 4px;">${parseFloat(hum).toFixed(0)}%</span>
+                      `
+                    ]]]
+                name: Kids<br>Room
+                icon: |
+                  [[[
+                    if (states[variables.sensor].state == "on") return "mdi:door-open";
+                    else return variables.icon;
+                  ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#kids-room'
+                hold_action:
+                  action: toggle
+                state:
+                  - value: 'on'
+                    styles:
+                      card:
+                        - height: 155px
+                      grid:
+                        - grid-template-areas: '''n i'' ''temp temp'' ''slider slider'''
+                        - grid-template-rows: 1fr min-content
+                        - grid-template-columns: 1fr 1fr
+                      custom_fields:
+                        temp:
+                          - margin-bottom: 15px
+                    custom_fields:
+                      slider:
+                        card:
+                          type: custom:my-slider-v2
+                          entity: '[[[ return entity.entity_id ]]]'
+                          colorMode: brightness
+                          styles:
+                            container:
+                              - background: none
+                              - border-radius: 0px
+                              - overflow: visible
+                            card:
+                              - height: 45px
+                              - padding: 0px
+                              - background: >-
+                                  linear-gradient(180deg, rgba(255,255,255,0)
+                                  0%, rgba(255,255,255,0.35) 100%)
+                              - border-radius: 0px 0px 24px 24px
+                              - width: 110%
+                              - position: absolute
+                              - margin-top: '-15px'
+                              - margin-left: '-12px'
+                            track:
+                              - overflow: visible
+                              - background: none
+                            progress:
+                              - background: >-
+                                  linear-gradient(90deg, rgba(255,255,255,0) 0%,
+                                  rgba(255,255,255,0.8) 100%)
+                              - height: 45px
+                            thumb:
+                              - background: none
+                              - height: 45px
+                              - width: 1px
+                styles:
+                  grid:
+                    - grid-template-areas: '''n i'' ''temp temp'''
+                    - grid-template-rows: 1fr min-content
+                    - grid-template-columns: 1fr 1fr
+                  card:
+                    - padding: 12px
+                    - height: 130px
+                    - border-radius: 24px
+                    - overflow: hidden
+                    - background: |
+                        [[[
+                          if (entity.state == "on") return "rgb(255,219,121)";
+                          else return "#1a1a1a";
+                        ]]]
+                  icon:
+                    - width: 24px
+                    - color: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "black";
+                          else return "#AAAAAA";
+                        ]]]
+                  img_cell:
+                    - justify-self: end
+                    - background: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "rgb(254,145,138)";
+                          else return "#333333";
+                        ]]]
+                    - border-radius: 100%
+                    - align-self: start
+                    - width: 48px
+                    - height: 48px
+                  name:
+                    - justify-self: start
+                    - align-self: start
+                    - text-align: left
+                    - font-size: 16px
+                    - font-weight: 500
+                    - padding-left: 4px
+                    - color: |
+                        [[[
+                          if (entity.state == "on") return "black";
+                          else return "white";
+                        ]]]
+                  custom_fields:
+                    temp:
+                      - justify-self: start
+                      - font-size: 42px
+                      - font-weight: 300
+                      - padding-left: 4px
+                      - color: |
+                          [[[
+                            if (entity.state == "on") return "black";
+                            else return "white";
+                          ]]]
+                custom_fields:
+                  temp: '[[[ return variables.state ]]]'
+              - type: custom:button-card
+                entity: media_player.lg_tv_obyvacka
+                variables:
+                  icon: mdi:sofa-outline
+                  sensor: binary_sensor.multisensor_esp32_c3_dvere_stav
+                  state: |
+                    [[[
+                      var temp = states['sensor.obyvacka_teplomer_teplota'].state;
+                      var hum = states['sensor.obyvacka_teplomer_vlhkost'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size: 0.4em; opacity: 0.6; margin-left: 4px;">${parseFloat(hum).toFixed(0)}%</span>
+                      `
+                    ]]]
+                name: Living<br>Room
+                icon: |
+                  [[[
+                    if (states[variables.sensor].state == "on") return "mdi:door-open";
+                    else return variables.icon;
+                  ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#living-room'
+                hold_action:
+                  action: toggle
+                state:
+                  - value: 'on'
+                    styles:
+                      card:
+                        - height: 155px
+                      grid:
+                        - grid-template-areas: '''n i'' ''temp temp'' ''slider slider'''
+                        - grid-template-rows: 1fr min-content
+                        - grid-template-columns: 1fr 1fr
+                      custom_fields:
+                        temp:
+                          - margin-bottom: 15px
+                styles:
+                  grid:
+                    - grid-template-areas: '''n i'' ''temp temp'''
+                    - grid-template-rows: 1fr min-content
+                    - grid-template-columns: 1fr 1fr
+                  card:
+                    - padding: 12px
+                    - height: 130px
+                    - border-radius: 24px
+                    - overflow: hidden
+                    - background: |
+                        [[[
+                          if (entity.state == "on") return "rgb(255,219,121)";
+                          else return "#1a1a1a";
+                        ]]]
+                  icon:
+                    - width: 24px
+                    - color: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "black";
+                          else return "#AAAAAA";
+                        ]]]
+                  img_cell:
+                    - justify-self: end
+                    - background: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "rgb(254,145,138)";
+                          else return "#333333";
+                        ]]]
+                    - border-radius: 100%
+                    - align-self: start
+                    - width: 48px
+                    - height: 48px
+                  name:
+                    - justify-self: start
+                    - align-self: start
+                    - text-align: left
+                    - font-size: 16px
+                    - font-weight: 500
+                    - padding-left: 4px
+                    - color: |
+                        [[[
+                          if (entity.state == "on") return "black";
+                          else return "white";
+                        ]]]
+                  custom_fields:
+                    temp:
+                      - justify-self: start
+                      - font-size: 42px
+                      - font-weight: 300
+                      - padding-left: 4px
+                      - color: |
+                          [[[
+                            if (entity.state == "on") return "black";
+                            else return "white";
+                          ]]]
+                custom_fields:
+                  temp: '[[[ return variables.state ]]]'
+              - type: custom:button-card
+                entity: light.deska_monitor_svetlo_monitor_led_pas
+                variables:
+                  icon: mdi:bed-king-outline
+                  sensor: binary_sensor.sonoff_1001f84959
+                  state: |
+                    [[[
+                      var temp = states['sensor.spalna_teplomer_teplota'].state;
+                      var hum = states['sensor.spalna_teplomer_vlhkost'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size: 0.4em; opacity: 0.6; margin-left: 4px;">${parseFloat(hum).toFixed(0)}%</span>
+                      `
+                    ]]]
+                name: Bed<br>Room
+                icon: |
+                  [[[
+                    if (states[variables.sensor].state == "on") return "mdi:door-open";
+                    else return variables.icon;
+                  ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#bed-room'
+                hold_action:
+                  action: toggle
+                state:
+                  - value: 'on'
+                    styles:
+                      card:
+                        - height: 155px
+                      grid:
+                        - grid-template-areas: '''n i'' ''temp temp'' ''slider slider'''
+                        - grid-template-rows: 1fr min-content
+                        - grid-template-columns: 1fr 1fr
+                      custom_fields:
+                        temp:
+                          - margin-bottom: 15px
+                    custom_fields:
+                      slider:
+                        card:
+                          type: custom:my-slider-v2
+                          entity: '[[[ return entity.entity_id ]]]'
+                          colorMode: brightness
+                          styles:
+                            container:
+                              - background: none
+                              - border-radius: 0px
+                              - overflow: visible
+                            card:
+                              - height: 45px
+                              - padding: 0px
+                              - background: >-
+                                  linear-gradient(180deg, rgba(255,255,255,0)
+                                  0%, rgba(255,255,255,0.35) 100%)
+                              - border-radius: 0px 0px 24px 24px
+                              - width: 110%
+                              - position: absolute
+                              - margin-top: '-15px'
+                              - margin-left: '-12px'
+                            track:
+                              - overflow: visible
+                              - background: none
+                            progress:
+                              - background: >-
+                                  linear-gradient(90deg, rgba(255,255,255,0) 0%,
+                                  rgba(255,255,255,0.8) 100%)
+                              - height: 45px
+                            thumb:
+                              - background: none
+                              - height: 45px
+                              - width: 1px
+                styles:
+                  grid:
+                    - grid-template-areas: '''n i'' ''temp temp'''
+                    - grid-template-rows: 1fr min-content
+                    - grid-template-columns: 1fr 1fr
+                  card:
+                    - padding: 12px
+                    - height: 130px
+                    - border-radius: 24px
+                    - overflow: hidden
+                    - background: |
+                        [[[
+                          if (entity.state == "on") return "rgb(255,219,121)";
+                          else return "#1a1a1a";
+                        ]]]
+                  icon:
+                    - width: 24px
+                    - color: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "black";
+                          else return "#AAAAAA";
+                        ]]]
+                  img_cell:
+                    - justify-self: end
+                    - background: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "rgb(254,145,138)";
+                          else return "#333333";
+                        ]]]
+                    - border-radius: 100%
+                    - align-self: start
+                    - width: 48px
+                    - height: 48px
+                  name:
+                    - justify-self: start
+                    - align-self: start
+                    - text-align: left
+                    - font-size: 16px
+                    - font-weight: 500
+                    - padding-left: 4px
+                    - color: |
+                        [[[
+                          if (entity.state == "on") return "black";
+                          else return "white";
+                        ]]]
+                  custom_fields:
+                    temp:
+                      - justify-self: start
+                      - font-size: 42px
+                      - font-weight: 300
+                      - padding-left: 4px
+                      - color: |
+                          [[[
+                            if (entity.state == "on") return "black";
+                            else return "white";
+                          ]]]
+                custom_fields:
+                  temp: '[[[ return variables.state ]]]'
+              - type: custom:button-card
+                entity: light.deska_monitor_svetlo_monitor_led_pas
+                variables:
+                  icon: mdi:silverware-variant
+                  sensor: binary_sensor.sonoff_1001f84959
+                  state: |
+                    [[[
+                      var temp = states['sensor.esphome_web_22bbbf_temperature'].state;
+                      var hum = states['sensor.esphome_web_22bbbf_humidity'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size: 0.4em; opacity: 0.6; margin-left: 4px;">${parseFloat(hum).toFixed(0)}%</span>
+                      `
+                    ]]]
+                name: Kitchen
+                icon: |
+                  [[[
+                    if (states[variables.sensor].state == "on") return "mdi:door-open";
+                    else return variables.icon;
+                  ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#kitchen'
+                hold_action:
+                  action: toggle
+                state:
+                  - value: 'on'
+                    styles:
+                      card:
+                        - height: 155px
+                      grid:
+                        - grid-template-areas: '''n i'' ''temp temp'' ''slider slider'''
+                        - grid-template-rows: 1fr min-content
+                        - grid-template-columns: 1fr 1fr
+                      custom_fields:
+                        temp:
+                          - margin-bottom: 15px
+                    custom_fields:
+                      slider:
+                        card:
+                          type: custom:my-slider-v2
+                          entity: '[[[ return entity.entity_id ]]]'
+                          colorMode: brightness
+                          styles:
+                            container:
+                              - background: none
+                              - border-radius: 0px
+                              - overflow: visible
+                            card:
+                              - height: 45px
+                              - padding: 0px
+                              - background: >-
+                                  linear-gradient(180deg, rgba(255,255,255,0)
+                                  0%, rgba(255,255,255,0.35) 100%)
+                              - border-radius: 0px 0px 24px 24px
+                              - width: 110%
+                              - position: absolute
+                              - margin-top: '-15px'
+                              - margin-left: '-12px'
+                            track:
+                              - overflow: visible
+                              - background: none
+                            progress:
+                              - background: >-
+                                  linear-gradient(90deg, rgba(255,255,255,0) 0%,
+                                  rgba(255,255,255,0.8) 100%)
+                              - height: 45px
+                            thumb:
+                              - background: none
+                              - height: 45px
+                              - width: 1px
+                styles:
+                  grid:
+                    - grid-template-areas: '''n i'' ''temp temp'''
+                    - grid-template-rows: 1fr min-content
+                    - grid-template-columns: 1fr 1fr
+                  card:
+                    - padding: 12px
+                    - height: 130px
+                    - border-radius: 24px
+                    - overflow: hidden
+                    - background: |
+                        [[[
+                          if (entity.state == "on") return "rgb(255,219,121)";
+                          else return "#1a1a1a";
+                        ]]]
+                  icon:
+                    - width: 24px
+                    - color: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "black";
+                          else return "#AAAAAA";
+                        ]]]
+                  img_cell:
+                    - justify-self: end
+                    - background: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "rgb(254,145,138)";
+                          else return "#333333";
+                        ]]]
+                    - border-radius: 100%
+                    - align-self: start
+                    - width: 48px
+                    - height: 48px
+                  name:
+                    - justify-self: start
+                    - align-self: start
+                    - text-align: left
+                    - font-size: 16px
+                    - font-weight: 500
+                    - padding-left: 4px
+                    - color: |
+                        [[[
+                          if (entity.state == "on") return "black";
+                          else return "white";
+                        ]]]
+                  custom_fields:
+                    temp:
+                      - justify-self: start
+                      - font-size: 42px
+                      - font-weight: 300
+                      - padding-left: 4px
+                      - color: |
+                          [[[
+                            if (entity.state == "on") return "black";
+                            else return "white";
+                          ]]]
+                custom_fields:
+                  temp: '[[[ return variables.state ]]]'
+            columns: 2
+            visibility:
+              - condition: state
+                entity: input_boolean.all_rooms
+                state: 'off'
+          - square: false
+            type: grid
+            cards:
+              - type: custom:button-card
+                entity: light.a1_03919d4c0704408_svetlo_komory
+                variables:
+                  icon: mdi:hammer-screwdriver
+                  sensor: binary_sensor.multisensor_esp32_c3_dvere_stav
+                  state: |
+                    [[[
+                      var temp = states['sensor.multisensor_esp32_c3_teplota'].state;
+                      var hum = states['sensor.multisensor_esp32_c3_vlhkost'].state;
+                      return `
+                      ${parseFloat(temp).toFixed(0)}°<span style="font-size: 0.4em; opacity: 0.6; margin-left: 4px;">${parseFloat(hum).toFixed(0)}%</span>
+                      `
+                    ]]]
+                name: Basement
+                icon: |
+                  [[[
+                    if (states[variables.sensor].state == "on") return "mdi:door-open";
+                    else return variables.icon;
+                  ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#basement'
+                hold_action:
+                  action: toggle
+                state:
+                  - value: 'on'
+                    styles:
+                      card:
+                        - height: 155px
+                      grid:
+                        - grid-template-areas: '''n i'' ''temp temp'' ''slider slider'''
+                        - grid-template-rows: 1fr min-content
+                        - grid-template-columns: 1fr 1fr
+                      custom_fields:
+                        temp:
+                          - margin-bottom: 15px
+                    custom_fields:
+                      slider:
+                        card:
+                          type: custom:my-slider-v2
+                          entity: '[[[ return entity.entity_id ]]]'
+                          colorMode: brightness
+                          styles:
+                            container:
+                              - background: none
+                              - border-radius: 0px
+                              - overflow: visible
+                            card:
+                              - height: 45px
+                              - padding: 0px
+                              - background: >-
+                                  linear-gradient(180deg, rgba(255,255,255,0)
+                                  0%, rgba(255,255,255,0.35) 100%)
+                              - border-radius: 0px 0px 24px 24px
+                              - width: 110%
+                              - position: absolute
+                              - margin-top: '-15px'
+                              - margin-left: '-12px'
+                            track:
+                              - overflow: visible
+                              - background: none
+                            progress:
+                              - background: >-
+                                  linear-gradient(90deg, rgba(255,255,255,0) 0%,
+                                  rgba(255,255,255,0.8) 100%)
+                              - height: 45px
+                            thumb:
+                              - background: none
+                              - height: 45px
+                              - width: 1px
+                styles:
+                  grid:
+                    - grid-template-areas: '''n i'' ''temp temp'''
+                    - grid-template-rows: 1fr min-content
+                    - grid-template-columns: 1fr 1fr
+                  card:
+                    - padding: 12px
+                    - height: 130px
+                    - border-radius: 24px
+                    - overflow: hidden
+                    - background: |
+                        [[[
+                          if (entity.state == "on") return "rgb(255,219,121)";
+                          else return "#1a1a1a";
+                        ]]]
+                  icon:
+                    - width: 24px
+                    - color: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "black";
+                          else return "#AAAAAA";
+                        ]]]
+                  img_cell:
+                    - justify-self: end
+                    - background: |
+                        [[[
+                          if (states[variables.sensor].state == "on") return "rgb(254,145,138)";
+                          else return "#333333";
+                        ]]]
+                    - border-radius: 100%
+                    - align-self: start
+                    - width: 48px
+                    - height: 48px
+                  name:
+                    - justify-self: start
+                    - align-self: start
+                    - text-align: left
+                    - font-size: 16px
+                    - font-weight: 500
+                    - padding-left: 4px
+                    - color: |
+                        [[[
+                          if (entity.state == "on") return "black";
+                          else return "white";
+                        ]]]
+                  custom_fields:
+                    temp:
+                      - justify-self: start
+                      - font-size: 42px
+                      - font-weight: 300
+                      - padding-left: 4px
+                      - color: |
+                          [[[
+                            if (entity.state == "on") return "black";
+                            else return "white";
+                          ]]]
+                custom_fields:
+                  temp: '[[[ return variables.state ]]]'
+            columns: 2
+            visibility:
+              - condition: state
+                entity: input_boolean.all_rooms
+                state: 'on'
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#kids-room'
+                button_type: name
+                name: Kids room
+                icon: mdi:desk
+              - type: custom:bubble-card
+                card_type: separator
+                name: Climate
+                icon: mdi:thermometer
+              - type: custom:bubble-card
+                card_type: climate
+                entity: climate.sonoff_trvzb_termostat
+                sub_button:
+                  - name: HVAC modes menu
+                    select_attribute: hvac_modes
+                    state_background: false
+                    show_arrow: false
+                name: Radiator
+                card_layout: normal
+                styles: ''
+              - type: custom:bubble-card
+                card_type: separator
+                name: Devices
+                icon: mdi:devices
+              - square: false
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    entity: switch.ivo_detska_zasuvka_1
+                    name: Desk Plug
+                    template: plug_card
+                columns: 3
+              - type: heading
+                icon: mdi:lightbulb-group
+                heading: Lights
+                heading_style: subtitle
+              - type: custom:auto-entities
+                card:
+                  type: grid
+                  columns: 2
+                  square: false
+                card_param: cards
+                filter:
+                  include:
+                    - domain: light
+                      area: detska
+                      options:
+                        type: custom:button-card
+                        template: light_slider
+                  exclude: []
+              - type: custom:bubble-card
+                card_type: separator
+                name: Sensors
+                icon: mdi:chip
+              - square: false
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    entity: binary_sensor.detska_pohybove_cidlo_pohyb
+                    name: Motion
+                    template: motion_card
+                  - type: custom:button-card
+                    entity: binary_sensor.sonoff_1001f84959
+                    name: Door
+                    template: door_card
+                  - type: custom:button-card
+                    entity: binary_sensor.postel_ivan_esp32_c3_ivan_v_posteli
+                    name: Bed
+                    template: bed_card
+                columns: 3
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                name: Living room
+                icon: mdi:sofa-outline
+                hash: '#living-room'
+                button_type: name
+              - type: heading
+                icon: mdi:devices
+                heading: Devices
+                heading_style: title
+              - type: custom:bubble-card
+                card_type: media-player
+                entity: media_player.lg_tv_obyvacka
+                icon: mdi:television
+                name: TV
+              - type: custom:bubble-card
+                card_type: media-player
+                entity: media_player.playstation_4
+                icon: mdi:sony-playstation
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                name: Basement
+                icon: mdi:hammer-screwdriver
+                hash: '#basement'
+              - type: custom:bubble-card
+                card_type: separator
+                name: Bambulab
+                icon: mdi:printer-3d-nozzle
+                button_type: slider
+                entity: select.a1_03919d4c0704408_rychlost_tlace
+                event_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+              - type: custom:ha-bambulab-ams-card
+                entity: ''
+                header: ''
+                subtitle: ''
+                style: graphic
+                ams: 4d92cb3191e0838b2195bd21fc7555bf
+                show_info_bar: false
+                show_type: true
+                spool_anim_wiggle: true
+                spool_anim_reflection: true
+              - type: custom:ha-bambulab-print_status-card
+                printer: MOCK
+                style: simple
+                custom_light: light.a1_03919d4c0704408_svetlo_komory
+                custom_camera: camera.a1_03919d4c0704408_kamera
+        column_span: 3
+      - type: grid
+        cards:
+          - square: true
+            type: grid
+            cards:
+              - type: custom:button-card
+                entity: timer.washing_machine
+                update_interval: 1s
+                variables:
+                  sensor: sensor.washing_machine_card_sensor
+                name: Washing Timer
+                icon: mdi:washing-machine
+                show_name: true
+                show_icon: true
+                show_label: false
+                show_state: false
+                tap_action:
+                  action: more-info
+                state:
+                  - value: idle
+                    styles:
+                      card:
+                        - display: none
+                  - value: unavailable
+                    styles:
+                      card:
+                        - display: none
+                custom_fields:
+                  bar: |
+                    [[[
+                      var color = "rgb(219,245,169)";
+                      var state = 100 - states[variables.sensor].attributes.remaining_perc;
+                      if (state < 10) color = "rgb(241,160,152)";
+                      else if (state < 50) color = "rgb(250,225,145)";
+                      else if (state < 90) color = "rgb(245,192,148)";
+                      return `
+                      <div>
+                        <div style="background:${color}; height: 12px; width:${state}%">
+                        </div>
+                      </div> `
+                    ]]]
+                  rem:
+                    card:
+                      type: custom:button-card
+                      entity: timer.washing_machine
+                      name: |
+                        [[[ 
+                          const end = entity.attributes.finishes_at;
+                          if (!end) return "00:00";
+                          const diff = new Date(end) - new Date();
+                          if (diff < 0) return "00:00";
+                          
+                          const hours = Math.floor(diff / 3600000);
+                          const mins = Math.floor((diff % 3600000) / 60000);
+                          const secs = Math.floor((diff % 60000) / 1000);
+                          
+                          return (hours > 0 ? hours + ":" : "") + 
+                                 (mins < 10 ? "0" + mins : mins) + ":" + 
+                                 (secs < 10 ? "0" + secs : secs);
+                        ]]]
+                      show_icon: false
+                      styles:
+                        card:
+                          - width: fit-content
+                          - background: none
+                          - border: none
+                          - overflow: visible
+                        name:
+                          - font-size: 14px
+                          - margin-top: 10px
+                          - font-weight: 600
+                          - color: white
+                  icon1: |
+                    [[[
+                      return '<ha-icon icon="mdi:timer-outline"></ha-icon>';
+                    ]]]
+                  icon2: ''
+                styles:
+                  grid:
+                    - grid-template-areas: '"i rem icon1" "i n icon2" "bar bar bar"'
+                    - grid-template-rows: min-content min-content min-content
+                    - grid-template-columns: 50px 1fr 1fr
+                  card:
+                    - padding: 10px 20px
+                    - background: rgb(25,27,37)
+                    - height: 80px
+                    - width: calc(100vw - 20px)
+                    - overflow: hidden
+                    - position: fixed
+                    - margin: 0
+                    - bottom: 90px
+                    - left: 10px
+                    - z-index: 1
+                    - box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px
+                  icon:
+                    - width: 30px
+                    - color: null
+                    - margin-right: 10px
+                    - margin-left: 5px
+                  name:
+                    - text-align: left
+                    - font-size: 10px
+                    - justify-self: start
+                    - align-self: start
+                    - overflow: visible
+                    - color: null
+                    - margin-left: 2px
+                  custom_fields:
+                    bar:
+                      - justify-self: start
+                      - align-self: start
+                      - margin-top: 10px
+                      - width: 99%
+                      - background: black
+                      - border-radius: 24px
+                      - height: |
+                          [[[
+                            if (entity.state == 'active') {
+                              return '4px';
+                            } else {
+                              return '0px';
+                            }
+                          ]]]
+                    icon1:
+                      - justify-self: end
+                      - align-self: end
+                      - width: 24px
+                      - padding-right: 5px
+                      - color: null
+            columns: 2
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+      - type: grid
+        cards:
+          - type: custom:navbar-card
+            layout:
+              auto_padding: null
+              enabled: true
+              desktop_px: 100
+              mobile_px: 180
+              reflect_child_state: false
+            desktop:
+              position: left
+              min-width: 768
+              show_labels: true
+              show_popup_label_backgrounds: false
+            mobile:
+              mode: docked
+              show_popup_label_backgrounds: true
+              show_labels: true
+            routes:
+              - icon: mdi:home-assistant
+                label: Home
+                url: /test-dash3/0
+              - icon: mdi:sofa
+                label: Rooms
+                badge:
+                  show: |
+                    [[[ return states['light.all_lights'].state === 'on']]]
+                  color: rgb(255,219,121)
+                  count: >
+                    [[[ return
+                    states['sensor.lights_and_switches_on_count'].state ]]]
+                tap_action:
+                  action: open-popup
+                popup:
+                  - icon: mdi:hammer-screwdriver
+                    tap_action:
+                      action: navigate
+                      navigation_path: '#basement'
+                    label: Basement
+                  - icon: mdi:silverware-variant
+                    label: Kitchen
+                    tap_action:
+                      action: navigate
+                      navigation_path: '#kitchen'
+                  - icon: mdi:bed-king-outline
+                    label: Bed Room
+                    tap_action:
+                      action: navigate
+                      navigation_path: '#bed-room'
+                  - icon: mdi:sofa-outline
+                    label: Living Room
+                    tap_action:
+                      action: navigate
+                      navigation_path: '#living-room'
+                  - icon: mdi:desk
+                    label: Kids Room
+                    tap_action:
+                      action: navigate
+                      navigation_path: '#kids-room'
+              - icon: mdi:cog
+                label: |
+                  [[[ return user.name ]]]
+                tap_action:
+                  action: navigate
+                  navigation_path: '#people'
+                image: >
+                  [[[ return
+                  hass.states['person.ivan_masar'].attributes.entity_picture ]]]
+                hidden: |
+                  [[[ return user.name != 'Ivan' ]]]
+              - icon: mdi:dots-horizontal
+                label: More
+                popup:
+                  - icon: mdi:cog
+                    url: /config/dashboard
+                  - icon: mdi:power
+                    tap_action:
+                      action: call-service
+                      confirmation:
+                        text: Are you sure you want to restart Home Assistant?
+                      service: homeassistant.restart
+                      service_data: {}
+                tap_action:
+                  action: open-popup
+            haptic:
+              url: false
+              tap_action: true
+            styles: |
+              ha-card {
+                background: none !important; 
+                box-shadow: none !important;
+                border: none !important;
+              }
+              .image {
+                border-radius: 16px !important;
+              }
+              .navbar {
+                --navbar-primary-color: rgb(233,189,250);
+                background: rgb(29,34,40) !important;
+                border-radius: 16px !important;
+                box-shadow: 0px 5px 15px rgba(0,0,0,0.3) !important;
+              }
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                name: Peoples
+                icon: mdi:account-group
+                hash: '#people'
+              - type: custom:bubble-card
+                card_type: separator
+                name: Status
+                icon: mdi:state-machine
+              - square: true
+                type: grid
+                cards:
+                  - type: custom:button-card
+                    entity: person.ivan_masar
+                    variables:
+                      sensor1: sensor.ivans_iphone_battery_level
+                      sensor2: sensor.ivans_iphone_steps
+                      sensor3: sensor.domov_ivan_masar_smer_jazdy
+                    show_name: true
+                    show_state: true
+                    show_entity_picture: true
+                    state:
+                      - value: not_home
+                        styles:
+                          entity_picture:
+                            - filter: grayscale(100%)
+                    tap_action:
+                      action: more-info
+                    styles:
+                      grid:
+                        - grid-template-areas: '''n n btn'' ''s s btn'' ''s s btn'''
+                        - grid-template-columns: 3fr min-content min-content
+                        - grid-template-rows: 1em 1em 1fr
+                      card:
+                        - background-color: none
+                        - padding: 10px 0px 10px 10px
+                        - border-radius: 24px
+                      img_cell:
+                        - justify-content: start
+                        - position: absolute
+                        - width: 90px
+                        - height: 90px
+                        - left: 0
+                        - bottom: 0
+                        - margin: 0 0 -10px -15px
+                        - border-radius: 500px
+                        - border: |
+                            [[[
+                              if (entity.state == 'home') {
+                                return '2px solid rgb(227, 243, 184)';
+                              } else {
+                                return 'none';
+                              }
+                            ]]]
+                      entity_picture:
+                        - width: 90px
+                        - height: 90px
+                        - opacity: |
+                            [[[
+                              if (entity.state == 'not_home') {
+                                return '0.7';
+                              } else {
+                                return '1';
+                              }
+                            ]]]
+                      name:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - color: none
+                        - font-size: 18px
+                        - font-weight: 500
+                      state:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - margin-top: 5px
+                        - color: none
+                        - font-size: 13px
+                        - opacity: 0.7
+                      custom_fields:
+                        btn:
+                          - align-self: end
+                          - justify-self: end
+                          - padding-right: 5px
+                    custom_fields:
+                      btn:
+                        card:
+                          type: custom:mushroom-chips-card
+                          chips:
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor1 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor2 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor3 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                  - type: custom:button-card
+                    entity: person.ivan_masar
+                    variables:
+                      sensor1: sensor.ivans_iphone_battery_level
+                      sensor2: sensor.ivans_iphone_steps
+                      sensor3: sensor.domov_ivan_masar_smer_jazdy
+                    show_name: true
+                    show_state: true
+                    show_entity_picture: true
+                    state:
+                      - value: not_home
+                        styles:
+                          entity_picture:
+                            - filter: grayscale(100%)
+                    tap_action:
+                      action: more-info
+                    styles:
+                      grid:
+                        - grid-template-areas: '''n n btn'' ''s s btn'' ''s s btn'''
+                        - grid-template-columns: 3fr min-content min-content
+                        - grid-template-rows: 1em 1em 1fr
+                      card:
+                        - background-color: none
+                        - padding: 10px 0px 10px 10px
+                        - border-radius: 24px
+                      img_cell:
+                        - justify-content: start
+                        - position: absolute
+                        - width: 90px
+                        - height: 90px
+                        - left: 0
+                        - bottom: 0
+                        - margin: 0 0 -10px -15px
+                        - border-radius: 500px
+                        - border: |
+                            [[[
+                              if (entity.state == 'home') {
+                                return '2px solid rgb(227, 243, 184)';
+                              } else {
+                                return 'none';
+                              }
+                            ]]]
+                      entity_picture:
+                        - width: 90px
+                        - height: 90px
+                        - opacity: |
+                            [[[
+                              if (entity.state == 'not_home') {
+                                return '0.7';
+                              } else {
+                                return '1';
+                              }
+                            ]]]
+                      name:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - color: none
+                        - font-size: 18px
+                        - font-weight: 500
+                      state:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - margin-top: 5px
+                        - color: none
+                        - font-size: 13px
+                        - opacity: 0.7
+                      custom_fields:
+                        btn:
+                          - align-self: end
+                          - justify-self: end
+                          - padding-right: 5px
+                    custom_fields:
+                      btn:
+                        card:
+                          type: custom:mushroom-chips-card
+                          chips:
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor1 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor2 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor3 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                  - type: custom:button-card
+                    entity: person.ivan_masar
+                    variables:
+                      sensor1: sensor.ivans_iphone_battery_level
+                      sensor2: sensor.ivans_iphone_steps
+                      sensor3: sensor.domov_ivan_masar_smer_jazdy
+                    show_name: true
+                    show_state: true
+                    show_entity_picture: true
+                    state:
+                      - value: not_home
+                        styles:
+                          entity_picture:
+                            - filter: grayscale(100%)
+                    tap_action:
+                      action: more-info
+                    styles:
+                      grid:
+                        - grid-template-areas: '''n n btn'' ''s s btn'' ''s s btn'''
+                        - grid-template-columns: 3fr min-content min-content
+                        - grid-template-rows: 1em 1em 1fr
+                      card:
+                        - background-color: none
+                        - padding: 10px 0px 10px 10px
+                        - border-radius: 24px
+                      img_cell:
+                        - justify-content: start
+                        - position: absolute
+                        - width: 90px
+                        - height: 90px
+                        - left: 0
+                        - bottom: 0
+                        - margin: 0 0 -10px -15px
+                        - border-radius: 500px
+                        - border: |
+                            [[[
+                              if (entity.state == 'home') {
+                                return '2px solid rgb(227, 243, 184)';
+                              } else {
+                                return 'none';
+                              }
+                            ]]]
+                      entity_picture:
+                        - width: 90px
+                        - height: 90px
+                        - opacity: |
+                            [[[
+                              if (entity.state == 'not_home') {
+                                return '0.7';
+                              } else {
+                                return '1';
+                              }
+                            ]]]
+                      name:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - color: none
+                        - font-size: 18px
+                        - font-weight: 500
+                      state:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - margin-top: 5px
+                        - color: none
+                        - font-size: 13px
+                        - opacity: 0.7
+                      custom_fields:
+                        btn:
+                          - align-self: end
+                          - justify-self: end
+                          - padding-right: 5px
+                    custom_fields:
+                      btn:
+                        card:
+                          type: custom:mushroom-chips-card
+                          chips:
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor1 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor2 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor3 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                  - type: custom:button-card
+                    entity: person.ivan_masar
+                    variables:
+                      sensor1: sensor.ivans_iphone_battery_level
+                      sensor2: sensor.ivans_iphone_steps
+                      sensor3: sensor.domov_ivan_masar_smer_jazdy
+                    show_name: true
+                    show_state: true
+                    show_entity_picture: true
+                    state:
+                      - value: not_home
+                        styles:
+                          entity_picture:
+                            - filter: grayscale(100%)
+                    tap_action:
+                      action: more-info
+                    styles:
+                      grid:
+                        - grid-template-areas: '''n n btn'' ''s s btn'' ''s s btn'''
+                        - grid-template-columns: 3fr min-content min-content
+                        - grid-template-rows: 1em 1em 1fr
+                      card:
+                        - background-color: none
+                        - padding: 10px 0px 10px 10px
+                        - border-radius: 24px
+                      img_cell:
+                        - justify-content: start
+                        - position: absolute
+                        - width: 90px
+                        - height: 90px
+                        - left: 0
+                        - bottom: 0
+                        - margin: 0 0 -10px -15px
+                        - border-radius: 500px
+                        - border: |
+                            [[[
+                              if (entity.state == 'home') {
+                                return '2px solid rgb(227, 243, 184)';
+                              } else {
+                                return 'none';
+                              }
+                            ]]]
+                      entity_picture:
+                        - width: 90px
+                        - height: 90px
+                        - opacity: |
+                            [[[
+                              if (entity.state == 'not_home') {
+                                return '0.7';
+                              } else {
+                                return '1';
+                              }
+                            ]]]
+                      name:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - color: none
+                        - font-size: 18px
+                        - font-weight: 500
+                      state:
+                        - align-self: start
+                        - justify-self: start
+                        - padding: 5px
+                        - margin-top: 5px
+                        - color: none
+                        - font-size: 13px
+                        - opacity: 0.7
+                      custom_fields:
+                        btn:
+                          - align-self: end
+                          - justify-self: end
+                          - padding-right: 5px
+                    custom_fields:
+                      btn:
+                        card:
+                          type: custom:mushroom-chips-card
+                          chips:
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor1 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor2 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                            - type: entity
+                              tap_action:
+                                action: more-info
+                              entity: '[[[ return variables.sensor3 ]]]'
+                              content_info: none
+                              card_mod:
+                                style: |
+                                  ha-card {
+                                    --chip-background: black;
+                                    --color: white;
+                                    padding: 0px !important;
+                                    box-shadow: none !important;
+                                  }
+                columns: 2
+    header:
+      card:
+        type: markdown
+        text_only: true
+        content: >-
+          # Hello {{ user }}
+
+          It's {{ states('sensor.time') }}, the weather {{
+          states('weather.forecast_home') }} with {{
+          state_attr('weather.forecast_home', 'temperature') }}°C. There are {{
+          states('sensor.lights_and_switches_on_count') }} lights on and {{
+          states('sensor.door_open_count') }} door open.
+        visibility:
+          - condition: screen
+            media_query: '(min-width: 768px)'
+      layout: responsive
+      badges_position: bottom
+      badges_wrap: scroll
+    badges:
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sensor.lights_and_switches_on_count
+        color: amber
+      - type: entity
+        show_name: false
+        show_state: true
+        show_icon: true
+        entity: sensor.door_open_count
+        color: red
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: person.ivan_masar
+        show_entity_picture: true
+        visibility:
+          - condition: user
+            users:
+              - e18ef9786cfa435793d0ce56f578d968
+    type: sections
+    max_columns: 3
+    icon: mdi:home
+    cards: []
