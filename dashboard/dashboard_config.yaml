@@ -16,14 +16,12 @@ button_card_templates:
             // 1. Prepínač 2 = Left
             if (entity.entity_id == 'light.wifi_smart_switch_prepinac_2') return "Left";
             
-            // 2. Prepínač 1 = Right (s preklepom smrt podla tvojho zadania)
+            // 2. Prepínač 1 = Right
             if (entity.entity_id == 'light.wifi_smart_switch_prepinac_1') return "Right";
             
-            // 3. Ak má svetlo jas, vypočítaj percentá (pre WLED atď.)
             if (entity.attributes.brightness)
               return Math.round(entity.attributes.brightness / 255 * 100) + '%';
             
-            // 4. Záchrana pre iné prípady
             return "Zapnuté";
           ]]]
         styles:
